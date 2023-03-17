@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:remora/utils/myLog.dart';
 import 'package:remora/utils/sizeConfig.dart';
+import 'package:rive/rive.dart';
 
 abstract class BaseWidget extends StatefulWidget {
   const BaseWidget({super.key});
@@ -75,6 +76,154 @@ class BaseWidgetState<T extends BaseWidget> extends State<T>
     } else {
       AppLog.i(msg);
     }
+  }
+
+  // lightColor() {
+  //   return Theme.of(context).primaryColorLight;
+  // }
+
+  Color pcd() {
+    return Theme.of(context).primaryColorDark;
+  }
+
+  Color pcl() {
+    return Theme.of(context).primaryColorLight;
+  }
+
+  Color pc() {
+    return Theme.of(context).primaryColor;
+  }
+
+  Color bc() {
+    return Theme.of(context).colorScheme.background;
+  }
+
+  imgw(String img,
+      {BoxFit? fit, String imgType = "png", double? width, double? height}) {
+    return Image.asset(
+      "images/$img.$imgType",
+      fit: fit,
+      height: height,
+      width: width,
+    );
+  }
+
+  txtw(String t,
+      {Color? color,
+      FontWeight? fontWeight,
+      double? size,
+      FontStyle? fontStyle,
+      bool withOverflow = true}) {
+    // color ??= const Color.fromRGBO(0, 0, 0, 0.392);
+    TextOverflow? overflow = withOverflow ? TextOverflow.ellipsis : null;
+    return Text(
+      t,
+      style: TextStyle(
+          color: color,
+          fontWeight: fontWeight,
+          fontSize: size,
+          overflow: overflow,
+          fontStyle: fontStyle),
+    );
+  }
+
+  Widget c(
+          {Widget? child,
+          double? h,
+          double? w,
+          double? allM,
+          double allP = 0,
+          double topM = 0,
+          double bottomM = 0,
+          double leftM = 0,
+          double rightM = 0,
+          double topP = 0,
+          double bottomP = 0,
+          double leftP = 0,
+          double rightP = 0,
+          double radius = 0,
+          Alignment? alig,
+          Color? color,
+          String? image,
+          BoxFit? fit = BoxFit.fill,
+          Alignment decoAlignment = Alignment.topCenter,
+          String imgType = "png",
+          // Color c = Colors.transparent,
+          List<BoxShadow>? boxShadow,
+          BoxShape boxShape = BoxShape.rectangle,
+          BorderRadius? borderRadius,
+          BoxBorder? border,
+          Rect? centerSlice}) =>
+      Container(
+        alignment: alig,
+        margin: allM == null
+            ? EdgeInsets.only(
+                left: leftM, right: rightM, bottom: bottomM, top: topM)
+            : EdgeInsets.all(allM),
+        padding: EdgeInsets.only(
+            left: leftP, right: rightP, bottom: bottomP, top: topP),
+        //.all(allP),
+        decoration: BoxDecoration(
+          color: color,
+          shape: boxShape,
+          boxShadow: boxShadow,
+          image: image == null
+              ? null
+              : DecorationImage(
+                  image: AssetImage('images/$image.$imgType'),
+                  scale: MediaQuery.of(context).devicePixelRatio,
+                  centerSlice: centerSlice,
+                  fit: fit,
+                  alignment: decoAlignment),
+          border: border,
+          borderRadius: boxShape != BoxShape.rectangle
+              ? null
+              : borderRadius ?? BorderRadius.circular(radius),
+        ),
+        height: h,
+        width: w,
+        child: child,
+      );
+
+  Widget get sb => const SizedBox();
+
+  Widget riveAsset({
+    required String path,
+    void Function(Artboard)? onInit,
+    Alignment? alignment,
+    List<String>? animations,
+    bool antialiasing = true,
+    List<RiveAnimationController<dynamic>>? controllers,
+    BoxFit? fit,
+  }) {
+    return RiveAnimation.asset(
+      "assets/$path.riv",
+      alignment: alignment,
+      animations: animations ?? [],
+      antialiasing: antialiasing,
+      controllers: controllers ?? [],
+      fit: fit,
+      onInit: onInit,
+    );
+  }
+
+  void pop([Object? o]) {
+    Navigator.of(context).pop(o);
+  }
+
+  Future toPage(Widget w) {
+    pt(
+        message: "Move to Page=======================>${w.toStringShallow()}",
+        v: true);
+    return Navigator.of(context).push(MaterialPageRoute(builder: (con) {
+      return w;
+    }));
+  }
+
+  void jumpToPage(Widget w) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (con) {
+      return w;
+    }));
   }
 
   @override
